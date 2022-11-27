@@ -1,4 +1,4 @@
-# GMX Contracts
+# Smart Contracts
 Contracts, fork from GMX.
 
 Their docs at https://gmxio.gitbook.io/gmx/contracts.
