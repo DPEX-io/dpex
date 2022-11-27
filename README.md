@@ -1,7 +1,7 @@
 # GMX Contracts
-Contracts for GMX.
+Contracts, fork from GMX.
 
-Docs at https://gmxio.gitbook.io/gmx/contracts.
+Their docs at https://gmxio.gitbook.io/gmx/contracts.
 
 ## Install Dependencies
 If npx is not installed yet:
