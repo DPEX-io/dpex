@@ -4,11 +4,11 @@ pragma solidity 0.6.12;
 
 import "../tokens/MintableBaseToken.sol";
 
-contract GMX is MintableBaseToken {
-    constructor() public MintableBaseToken("DPEX", "DPEX", 0) {
+contract EsDPEX is MintableBaseToken {
+    constructor() public MintableBaseToken("Escrowed DPEX", "esDPEX", 0) {
     }
 
     function id() external pure returns (string memory _name) {
-        return "DPEX";
+        return "esDPEX";
     }
 }
