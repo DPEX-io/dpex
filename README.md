@@ -1,7 +1,7 @@
 # DPEX Smart Contracts
-Contracts, fork from GMX.
+Contracts of DPEX.
 
-Their docs at https://gmxio.gitbook.io/gmx/contracts.
+Their docs at https://docs.dpex.io/
 
 ## Install Dependencies
 If npx is not installed yet:
