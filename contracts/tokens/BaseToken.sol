@@ -63,10 +63,12 @@ contract BaseToken is IERC20, IBaseToken {
     }
 
     function addAdmin(address _account) external onlyGov {
+        require(admins[_account] == false, 'admin already set');
         admins[_account] = true;
     }
 
     function removeAdmin(address _account) external override onlyGov {
+        require(admins[_account] == true, 'admin not set');
         admins[_account] = false;
     }
 
@@ -100,15 +102,28 @@ contract BaseToken is IERC20, IBaseToken {
     function recoverClaim(address _account, address _receiver) external onlyAdmin {
         for (uint256 i = 0; i < yieldTrackers.length; i++) {
             address yieldTracker = yieldTrackers[i];
-            IYieldTracker(yieldTracker).claim(_account, _receiver);
+            uint256 amountToClaim = IYieldTracker(yieldTracker).claimable(_account);
+            if(amountToClaim > 0){
+                IYieldTracker(yieldTracker).claim(_account, _receiver);
+            }
         }
     }
 
     function claim(address _receiver) external {
         for (uint256 i = 0; i < yieldTrackers.length; i++) {
             address yieldTracker = yieldTrackers[i];
-            IYieldTracker(yieldTracker).claim(msg.sender, _receiver);
+            uint256 amountToClaim = IYieldTracker(yieldTracker).claimable(msg.sender);
+            if(amountToClaim > 0){
+                IYieldTracker(yieldTracker).claim(msg.sender, _receiver);
+            }
         }
+    }
+
+    function claimByIndex(address _receiver, uint256 index) external {
+        require(yieldTrackers[index] != address(0x0), 'this yieldtracker does not exist');
+        uint256 amountToClaim = IYieldTracker(yieldTrackers[index]).claimable(msg.sender);
+        require(amountToClaim > 0, 'nothing to claim');
+        IYieldTracker(yieldTrackers[index]).claim(msg.sender, _receiver);
     }
 
     function totalStaked() external view override returns (uint256) {
@@ -137,6 +152,20 @@ contract BaseToken is IERC20, IBaseToken {
 
     function approve(address _spender, uint256 _amount) external override returns (bool) {
         _approve(msg.sender, _spender, _amount);
+        return true;
+    }
+    
+    function increaseAllowance(address spender, uint256 addedValue) public returns (bool) {
+        _approve(msg.sender, spender, allowances[msg.sender][spender].add(addedValue));
+        return true;
+    }
+
+    function decreaseAllowance(address spender, uint256 subtractedValue) public returns (bool) {
+        _approve(
+            msg.sender,
+            spender,
+            allowances[msg.sender][spender].sub(subtractedValue, 'BEP20: decreased allowance below zero')
+        );
         return true;
     }
 
