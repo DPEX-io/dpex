@@ -8,4 +8,5 @@ interface IRouter {
     function pluginIncreasePosition(address _account, address _collateralToken, address _indexToken, uint256 _sizeDelta, bool _isLong) external;
     function pluginDecreasePosition(address _account, address _collateralToken, address _indexToken, uint256 _collateralDelta, uint256 _sizeDelta, bool _isLong, address _receiver) external returns (uint256);
     function swap(address[] memory _path, uint256 _amountIn, uint256 _minOut, address _receiver) external;
+    function plugins(address _plugin) external returns (bool);
 }

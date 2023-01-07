@@ -89,6 +89,11 @@ contract BasePositionManager is IBasePositionManager, ReentrancyGuard, Governabl
         address _weth,
         uint256 _depositFee
     ) public {
+        require(_vault != address(0x0), 'Wrong address');
+        require(_router != address(0x0), 'Wrong address');
+        require(_shortsTracker != address(0x0), 'Wrong address');
+        require(_weth != address(0x0), 'Wrong address');
+
         vault = _vault;
         router = _router;
         weth = _weth;
@@ -103,6 +108,7 @@ contract BasePositionManager is IBasePositionManager, ReentrancyGuard, Governabl
     }
 
     function setAdmin(address _admin) external onlyGov {
+        require(_admin != address(0x0), 'Wrong address');
         admin = _admin;
         emit SetAdmin(_admin);
     }
@@ -118,6 +124,7 @@ contract BasePositionManager is IBasePositionManager, ReentrancyGuard, Governabl
     }
 
     function setReferralStorage(address _referralStorage) external onlyAdmin {
+        require(_referralStorage != address(0x0), 'Wrong address');
         referralStorage = _referralStorage;
         emit SetReferralStorage(_referralStorage);
     }

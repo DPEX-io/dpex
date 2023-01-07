@@ -110,10 +110,10 @@ contract DPLPManager is ReentrancyGuard, Governable, IGlpManager {
         return _removeLiquidity(msg.sender, _tokenOut, _glpAmount, _minOut, _receiver);
     }
 
-    function removeLiquidityForAccount(address _account, address _tokenOut, uint256 _glpAmount, uint256 _minOut, address _receiver) external override nonReentrant returns (uint256) {
+   /* function removeLiquidityForAccount(address _account, address _tokenOut, uint256 _glpAmount, uint256 _minOut, address _receiver) external override nonReentrant returns (uint256) {
         _validateHandler();
         return _removeLiquidity(_account, _tokenOut, _glpAmount, _minOut, _receiver);
-    }
+    } */
 
     function getPrice(bool _maximise) external view returns (uint256) {
         uint256 aum = getAum(_maximise);
@@ -245,7 +245,7 @@ contract DPLPManager is ReentrancyGuard, Governable, IGlpManager {
 
         IMintable(glp).burn(_account, _glpAmount);
 
-        IERC20(usdg).transfer(address(vault), usdgAmount);
+        IERC20(usdg).safeTransfer(address(vault), usdgAmount);
         uint256 amountOut = vault.sellUSDG(_tokenOut, _receiver);
         require(amountOut >= _minOut, "GlpManager: insufficient output");
 

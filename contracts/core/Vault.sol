@@ -63,7 +63,7 @@ contract Vault is ReentrancyGuard, IVault {
     uint256 public override marginFeeBasisPoints = 10; // 0.1%
 
     uint256 public override minProfitTime;
-    bool public override hasDynamicFees = false;
+    bool public override hasDynamicFees;
 
     uint256 public override fundingInterval = 8 hours;
     uint256 public override fundingRateFactor;
@@ -71,10 +71,10 @@ contract Vault is ReentrancyGuard, IVault {
     uint256 public override totalTokenWeights;
 
     bool public includeAmmPrice = true;
-    bool public useSwapPricing = false;
+    bool public useSwapPricing;
 
-    bool public override inManagerMode = false;
-    bool public override inPrivateLiquidationMode = false;
+    bool public override inManagerMode;
+    bool public override inPrivateLiquidationMode;
 
     uint256 public override maxGasPrice;
 
@@ -292,6 +292,7 @@ contract Vault is ReentrancyGuard, IVault {
     }
 
     function setGov(address _gov) external {
+        require(_gov != address(0x0), 'Wrong governance address');
         _onlyGov();
         gov = _gov;
     }
@@ -406,6 +407,7 @@ contract Vault is ReentrancyGuard, IVault {
 
     function withdrawFees(address _token, address _receiver) external override returns (uint256) {
         _onlyGov();
+        require(_receiver != address(0x0), 'Wrong receiver address');
         uint256 amount = feeReserves[_token];
         if(amount == 0) { return 0; }
         feeReserves[_token] = 0;
@@ -433,9 +435,19 @@ contract Vault is ReentrancyGuard, IVault {
         _decreaseUsdgAmount(_token, usdgAmount.sub(_amount));
     }
 
+    bytes4 public constant IID_TEST = type(IVault).interfaceId;
+
+    function supportsInterface(bytes4 interfaceId) public override view virtual returns (bool) {
+        return interfaceId == IID_TEST;
+    }
+
     // the governance controlling this function should have a timelock
     function upgradeVault(address _newVault, address _token, uint256 _amount) external {
         _onlyGov();
+        require(
+        IVault(_newVault).supportsInterface(type(IVault).interfaceId),
+        "Contract does not support IVault interface."
+        );
         IERC20(_token).safeTransfer(_newVault, _amount);
     }
 
@@ -450,6 +462,7 @@ contract Vault is ReentrancyGuard, IVault {
     }
 
     function buyUSDG(address _token, address _receiver) external override nonReentrant returns (uint256) {
+        require(_receiver != address(0x0), 'Wrong receiver address');
         _validateManager();
         _validate(whitelistedTokens[_token], 16);
         useSwapPricing = true;
@@ -482,6 +495,7 @@ contract Vault is ReentrancyGuard, IVault {
     }
 
     function sellUSDG(address _token, address _receiver) external override nonReentrant returns (uint256) {
+        require(_receiver != address(0x0), 'Wrong receiver address');
         _validateManager();
         _validate(whitelistedTokens[_token], 19);
         useSwapPricing = true;
@@ -518,6 +532,7 @@ contract Vault is ReentrancyGuard, IVault {
     }
 
     function swap(address _tokenIn, address _tokenOut, address _receiver) external override nonReentrant returns (uint256) {
+        require(_receiver != address(0x0), 'Wrong receiver address');
         _validate(isSwapEnabled, 23);
         _validate(whitelistedTokens[_tokenIn], 24);
         _validate(whitelistedTokens[_tokenOut], 25);
@@ -629,12 +644,14 @@ contract Vault is ReentrancyGuard, IVault {
     }
 
     function decreasePosition(address _account, address _collateralToken, address _indexToken, uint256 _collateralDelta, uint256 _sizeDelta, bool _isLong, address _receiver) external override nonReentrant returns (uint256) {
+        require(_receiver != address(0x0), 'Wrong receiver address');
         _validateGasPrice();
         _validateRouter(_account);
         return _decreasePosition(_account, _collateralToken, _indexToken, _collateralDelta, _sizeDelta, _isLong, _receiver);
     }
 
     function _decreasePosition(address _account, address _collateralToken, address _indexToken, uint256 _collateralDelta, uint256 _sizeDelta, bool _isLong, address _receiver) private returns (uint256) {
+        require(_receiver != address(0x0), 'Wrong receiver address');
         vaultUtils.validateDecreasePosition(_account, _collateralToken, _indexToken, _collateralDelta, _sizeDelta, _isLong, _receiver);
         updateCumulativeFundingRate(_collateralToken, _indexToken);
 
@@ -1121,6 +1138,7 @@ contract Vault is ReentrancyGuard, IVault {
     }
 
     function _transferOut(address _token, uint256 _amount, address _receiver) private {
+        require(_receiver != address(0x0), 'Wrong receiver address');
         IERC20(_token).safeTransfer(_receiver, _amount);
         tokenBalances[_token] = IERC20(_token).balanceOf(address(this));
     }

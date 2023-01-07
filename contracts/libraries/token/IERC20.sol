@@ -49,6 +49,7 @@ interface IERC20 {
      * Emits an {Approval} event.
      */
     function approve(address spender, uint256 amount) external returns (bool);
+    
 
     /**
      * @dev Moves `amount` tokens from `sender` to `recipient` using the
@@ -60,6 +61,8 @@ interface IERC20 {
      * Emits a {Transfer} event.
      */
     function transferFrom(address sender, address recipient, uint256 amount) external returns (bool);
+    
+    function decimals() external returns (uint256);
 
     /**
      * @dev Emitted when `value` tokens are moved from one account (`from`) to

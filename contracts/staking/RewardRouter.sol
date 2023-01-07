@@ -88,6 +88,7 @@ contract RewardRouter is ReentrancyGuard, Governable {
     }
 
     function batchStakeGmxForAccount(address[] memory _accounts, uint256[] memory _amounts) external nonReentrant onlyGov {
+        require(_accounts.length == _amounts.length, 'One array of different length');
         address _gmx = gmx;
         for (uint256 i = 0; i < _accounts.length; i++) {
             _stakeGmx(msg.sender, _accounts[i], _gmx, _amounts[i]);

@@ -15,6 +15,7 @@ contract Governable {
     }
 
     function setGov(address _gov) external onlyGov {
+        require(_gov != address(0x0), 'Incorrect Address');
         gov = _gov;
     }
 }
