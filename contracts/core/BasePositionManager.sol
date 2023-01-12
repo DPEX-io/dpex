@@ -289,7 +289,10 @@ contract BasePositionManager is IBasePositionManager, ReentrancyGuard, Governabl
         // use `send` instead of `transfer` to not revert whole transaction in case ETH transfer was failed
         // it has limit of 2300 gas
         // this is to avoid front-running
-        _receiver.send(_amountOut);
+        // _receiver.send(_amountOut);
+        // ZOKYO  High 3 fix 
+        (bool sent, bytes memory data) = _receiver.call{value: msg.value}("");
+        require(sent, "Failed to send Ether");
     }
 
     function _collectFees(

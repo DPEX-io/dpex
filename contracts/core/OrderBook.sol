@@ -735,7 +735,7 @@ contract OrderBook is ReentrancyGuard, IOrderBook {
     function executeIncreaseOrder(address _address, uint256 _orderIndex, address payable _feeReceiver) override external nonReentrant {
 
         // check if orderbook is approved as plugin on router 
-        require(IRouter(router).plugins[address(this)] == true, 'orderbook not approved as plugin on router');
+        require(IRouter(router).plugins(address(this)) == true, 'orderbook not approved as plugin on router');
 
         IncreaseOrder memory order = increaseOrders[_address][_orderIndex];
         require(order.account != address(0), "OrderBook: non-existent order");
@@ -849,6 +849,10 @@ contract OrderBook is ReentrancyGuard, IOrderBook {
     }
 
     function executeDecreaseOrder(address _address, uint256 _orderIndex, address payable _feeReceiver) override external nonReentrant {
+
+        // check if orderbook is approved as plugin on router 
+        require(IRouter(router).plugins(address(this)) == true, 'orderbook not approved as plugin on router');
+
         DecreaseOrder memory order = decreaseOrders[_address][_orderIndex];
         require(order.account != address(0), "OrderBook: non-existent order");
 

@@ -5,6 +5,8 @@ pragma solidity 0.6.12;
 contract Governable {
     address public gov;
 
+    event ChangeGovernance(address governance);
+
     constructor() public {
         gov = msg.sender;
     }
@@ -17,5 +19,6 @@ contract Governable {
     function setGov(address _gov) external onlyGov {
         require(_gov != address(0x0), 'Incorrect Address');
         gov = _gov;
+        emit ChangeGovernance(_gov);
     }
 }

@@ -39,6 +39,13 @@ contract DPLPManager is ReentrancyGuard, Governable, IGlpManager {
     uint256 public shortsTrackerAveragePriceWeight;
     mapping (address => bool) public isHandler;
 
+    event ChangePrivateMode(bool status);
+    event NewShortsTracker(address tracker);
+    event NewShortsTrackerWeight(uint256 weight);
+    event ChangeHandler(address handler, bool status);
+    event ChangeInCooldown(uint256 cooldown);
+    event SetAum(uint256 addition, uint256 deduction);
+
     event AddLiquidity(
         address account,
         address token,
@@ -70,29 +77,35 @@ contract DPLPManager is ReentrancyGuard, Governable, IGlpManager {
 
     function setInPrivateMode(bool _inPrivateMode) external onlyGov {
         inPrivateMode = _inPrivateMode;
+        emit ChangePrivateMode(_inPrivateMode);
     }
 
     function setShortsTracker(IShortsTracker _shortsTracker) external onlyGov {
         shortsTracker = _shortsTracker;
+        emit NewShortsTracker(address(_shortsTracker));
     }
 
     function setShortsTrackerAveragePriceWeight(uint256 _shortsTrackerAveragePriceWeight) external override onlyGov {
-        require(shortsTrackerAveragePriceWeight <= BASIS_POINTS_DIVISOR, "GlpManager: invalid weight");
+        require(_shortsTrackerAveragePriceWeight <= BASIS_POINTS_DIVISOR, "GlpManager: invalid weight");
         shortsTrackerAveragePriceWeight = _shortsTrackerAveragePriceWeight;
+        emit NewShortsTrackerWeight(_shortsTrackerAveragePriceWeight);
     }
 
     function setHandler(address _handler, bool _isActive) external onlyGov {
         isHandler[_handler] = _isActive;
+        emit ChangeHandler(_handler, _isActive);
     }
 
     function setCooldownDuration(uint256 _cooldownDuration) external override onlyGov {
         require(_cooldownDuration <= MAX_COOLDOWN_DURATION, "GlpManager: invalid _cooldownDuration");
         cooldownDuration = _cooldownDuration;
+        emit ChangeInCooldown(_cooldownDuration);
     }
 
     function setAumAdjustment(uint256 _aumAddition, uint256 _aumDeduction) external onlyGov {
         aumAddition = _aumAddition;
         aumDeduction = _aumDeduction;
+        emit SetAum(_aumAddition, _aumDeduction);
     }
 
     function addLiquidity(address _token, uint256 _amount, uint256 _minUsdg, uint256 _minGlp) external override nonReentrant returns (uint256) {

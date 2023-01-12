@@ -4,6 +4,7 @@ pragma solidity 0.6.12;
 
 import "../libraries/math/SafeMath.sol";
 import "../libraries/token/IERC20.sol";
+import "../libraries/token/IDecimal.sol"
 import "../libraries/token/SafeERC20.sol";
 import "../libraries/utils/ReentrancyGuard.sol";
 
@@ -48,6 +49,11 @@ contract RewardTracker is IERC20, ReentrancyGuard, IRewardTracker, Governable {
     mapping (address => bool) public isHandler;
 
     event Claim(address receiver, uint256 amount);
+    event IsDepositToken(address token, bool status);
+    event InPrivateTransfer(bool status);
+    event InPrivateStaking(bool status);
+    event InPrivateClaiming(bool status);
+    event ChangeHandler(address handler, bool status);
 
     constructor(string memory _name, string memory _symbol) public {
         name = _name;
@@ -77,22 +83,27 @@ contract RewardTracker is IERC20, ReentrancyGuard, IRewardTracker, Governable {
         if(_isDepositToken == false){
             hasOnceBeenDepositToken[_depositToken] = true; 
         }
+        emit IsDepositToken(_depositToken, _isDepositToken);
     }
 
     function setInPrivateTransferMode(bool _inPrivateTransferMode) external onlyGov {
         inPrivateTransferMode = _inPrivateTransferMode;
+        emit InPrivateTransfer(_inPrivateTransferMode);
     }
 
     function setInPrivateStakingMode(bool _inPrivateStakingMode) external onlyGov {
         inPrivateStakingMode = _inPrivateStakingMode;
+        emit InPrivateStaking(_inPrivateStakingMode);
     }
 
     function setInPrivateClaimingMode(bool _inPrivateClaimingMode) external onlyGov {
         inPrivateClaimingMode = _inPrivateClaimingMode;
+        emit InPrivateClaiming(_inPrivateClaimingMode);
     }
 
     function setHandler(address _handler, bool _isActive) external onlyGov {
         isHandler[_handler] = _isActive;
+        emit ChangeHandler(_handler, _isActive);
     }
 
     // to help users who accidentally send their tokens to this contract
@@ -247,7 +258,7 @@ contract RewardTracker is IERC20, ReentrancyGuard, IRewardTracker, Governable {
     function _stake(address _fundingAccount, address _account, address _depositToken, uint256 _amount) private {
         require(_amount > 0, "RewardTracker: invalid _amount");
         require(isDepositToken[_depositToken], "RewardTracker: invalid _depositToken");
-        require(IERC20(_depositToken).decimals() == 18, "RewardTracker: You cannot deposit this token");
+        require(IDecimalChecker(_depositToken).decimals() == 18, "RewardTracker: You cannot deposit this token");
 
         IERC20(_depositToken).safeTransferFrom(_fundingAccount, address(this), _amount);
 
