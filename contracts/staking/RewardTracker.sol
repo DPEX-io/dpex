@@ -4,7 +4,7 @@ pragma solidity 0.6.12;
 
 import "../libraries/math/SafeMath.sol";
 import "../libraries/token/IERC20.sol";
-import "../libraries/token/IDecimal.sol"
+import "../libraries/token/IDecimal.sol";
 import "../libraries/token/SafeERC20.sol";
 import "../libraries/utils/ReentrancyGuard.sol";
 
