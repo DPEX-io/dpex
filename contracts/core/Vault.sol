@@ -253,7 +253,7 @@ contract Vault is ReentrancyGuard, IVault {
     event ChangeMaxLeverage(uint256 leverage);
     event ChangeBufferForToken(address token, uint256 amount);
     event ChangeGlobalShortSize(address token, uint256 amount);
-    event ChangeOfFees(uint256 _tax, uint256 _stableTax, uint256 _mintBurn, uint256 _swapFee, uint256 _marginFee, uint256 _liquidationFee, uint256 _minProfitTime, bool isDynamic);
+    event ChangeOfFees(uint256 _tax, uint256 _stableTax, uint256 _mintBurn, uint256 _swapFee, uint256 _stableSwapFeeBasisPoints, uint256 _marginFee, uint256 _liquidationFee, uint256 _minProfitTime, bool isDynamic);
     event ChangeFundingRate(uint256 _fundingInterval, uint256 _fundingRateFactor, uint256 _stableFundingRateFactor);
     event ChangeTokenConfig(address _token, uint256 _tokenDecimals, uint256 _tokenWeight, uint256 _minProfitBps, uint256 _maxUsdgAmount, bool _isStable, bool _isShortable);
     event ClearTokenConfiguration(address token);
@@ -384,6 +384,7 @@ contract Vault is ReentrancyGuard, IVault {
         minProfitTime = _minProfitTime;
         hasDynamicFees = _hasDynamicFees;
         emit ChangeOfFees(_taxBasisPoints, _stableTaxBasisPoints, _mintBurnFeeBasisPoints, _swapFeeBasisPoints, _stableSwapFeeBasisPoints, _marginFeeBasisPoints, _liquidationFeeUsd, _minProfitTime, _hasDynamicFees);
+
     }
 
     function setFundingRate(uint256 _fundingInterval, uint256 _fundingRateFactor, uint256 _stableFundingRateFactor) external override {

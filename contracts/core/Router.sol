@@ -23,7 +23,7 @@ contract Router is IRouter {
     address public usdg;
     address public vault;
 
-    mapping (address => bool) public plugins;
+    mapping (address => bool) public override plugins;
     mapping (address => mapping (address => bool)) public approvedPlugins;
 
     event Swap(address account, address tokenIn, address tokenOut, uint256 amountIn, uint256 amountOut);

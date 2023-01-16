@@ -123,10 +123,11 @@ contract DPLPManager is ReentrancyGuard, Governable, IGlpManager {
         return _removeLiquidity(msg.sender, _tokenOut, _glpAmount, _minOut, _receiver);
     }
 
-   /* function removeLiquidityForAccount(address _account, address _tokenOut, uint256 _glpAmount, uint256 _minOut, address _receiver) external override nonReentrant returns (uint256) {
+   function removeLiquidityForAccount(address _account, address _tokenOut, uint256 _glpAmount, uint256 _minOut, address _receiver) external override nonReentrant returns (uint256) {
         _validateHandler();
+        require(_account == _receiver, 'invalid removal');
         return _removeLiquidity(_account, _tokenOut, _glpAmount, _minOut, _receiver);
-    } */
+    }
 
     function getPrice(bool _maximise) external view returns (uint256) {
         uint256 aum = getAum(_maximise);

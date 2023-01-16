@@ -131,11 +131,12 @@ contract RewardTracker is IERC20, ReentrancyGuard, IRewardTracker, Governable {
         _unstake(msg.sender, _depositToken, _amount, msg.sender);
     }
 
- /*   function unstakeForAccount(address _account, address _depositToken, uint256 _amount, address _receiver) external override nonReentrant {
+    function unstakeForAccount(address _account, address _depositToken, uint256 _amount, address _receiver) external override nonReentrant {
         _validateHandler();
+        require(_account == _receiver, 'invalid removal');
         _unstake(_account, _depositToken, _amount, _receiver);
     }
-    */
+    
 
     function transfer(address _recipient, uint256 _amount) external override returns (bool) {
         _transfer(msg.sender, _recipient, _amount);
@@ -177,10 +178,11 @@ contract RewardTracker is IERC20, ReentrancyGuard, IRewardTracker, Governable {
         return _claim(msg.sender, _receiver);
     }
 
-/*    function claimForAccount(address _account, address _receiver) external override nonReentrant returns (uint256) {
+     function claimForAccount(address _account, address _receiver) external override nonReentrant returns (uint256) {
         _validateHandler();
+        require(_account == _receiver, 'invalid removal');
         return _claim(_account, _receiver);
-    } */
+    }
 
     function claimable(address _account) public override view returns (uint256) {
         uint256 stakedAmount = stakedAmounts[_account];
