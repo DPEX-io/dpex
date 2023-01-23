@@ -50,9 +50,6 @@ interface IVault {
     function setInPrivateLiquidationMode(bool _inPrivateLiquidationMode) external;
     function setLiquidator(address _liquidator, bool _isActive) external;
 
-    function supportsInterface(bytes4 interfaceId) external view returns (bool);
-
-
     function setFundingRate(uint256 _fundingInterval, uint256 _fundingRateFactor, uint256 _stableFundingRateFactor) external;
 
     function setFees(
