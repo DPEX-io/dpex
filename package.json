@@ -25,7 +25,8 @@
     "hardhat": "^2.6.1",
     "hardhat-contract-sizer": "^2.0.3",
     "node-fetch": "3.2.3",
-    "typechain": "^5.1.2"
+    "typechain": "^5.1.2",
+    "dotenv": "^10.0.0"
   },
   "dependencies": {
     "@uniswap/sdk-core": "^3.0.1",

@@ -3,27 +3,13 @@ require("@nomiclabs/hardhat-etherscan")
 require("hardhat-contract-sizer")
 require('@typechain/hardhat')
 
-const {
-  BSC_URL,
-  BSC_DEPLOY_KEY,
-  BSCSCAN_API_KEY,
-  POLYGONSCAN_API_KEY,
-  SNOWTRACE_API_KEY,
-  ARBISCAN_API_KEY,
-  ETHERSCAN_API_KEY,
-  BSC_TESTNET_URL,
-  BSC_TESTNET_DEPLOY_KEY,
-  ARBITRUM_TESTNET_DEPLOY_KEY,
-  ARBITRUM_TESTNET_URL,
-  ARBITRUM_DEPLOY_KEY,
-  ARBITRUM_URL,
-  AVAX_DEPLOY_KEY,
-  AVAX_URL,
-  POLYGON_DEPLOY_KEY,
-  POLYGON_URL,
-  MAINNET_URL,
-  MAINNET_DEPLOY_KEY
-} = require("./env.json")
+// ENV
+const {config} = require('dotenv');
+const { resolve } = require('path');
+config({ path: resolve(__dirname, "./.env") });
+const ADMIN_PKEY = process.env.ADMIN_PKEY || "";
+const ADMIN_PKEY_TESTNET = process.env.ADMIN_PKEY_TESTNET || "";
+console.log(" keys", ADMIN_PKEY_TESTNET)
 
 // This is a sample Hardhat task. To learn how to create your own go to
 // https://hardhat.org/guides/create-task.html
@@ -44,61 +30,55 @@ task("accounts", "Prints the list of accounts", async () => {
 module.exports = {
   networks: {
     localhost: {
-      timeout: 120000
+      url: "http://localhost:8545",
+      saveDeployments: false,
+      /*
+        notice no mnemonic here? it will just use account 0 of the hardhat node to deploy
+        (you can put in a mnemonic here to set the deployer locally)
+      */
     },
-    hardhat: {
-      allowUnlimitedContractSize: true
+    stagingv3: {
+      url: "https://staging-v3.skalenodes.com/v1/staging-legal-crazy-castor",
+      accounts: [ADMIN_PKEY_TESTNET],
     },
-    bsc: {
-      url: BSC_URL,
-      chainId: 56,
-      gasPrice: 10000000000,
-      accounts: [BSC_DEPLOY_KEY]
-    },
-    testnet: {
-      url: BSC_TESTNET_URL,
-      chainId: 97,
-      gasPrice: 20000000000,
-      accounts: [BSC_TESTNET_DEPLOY_KEY]
-    },
-    arbitrumTestnet: {
-      url: ARBITRUM_TESTNET_URL,
-      gasPrice: 10000000000,
-      chainId: 421611,
-      accounts: [ARBITRUM_TESTNET_DEPLOY_KEY]
-    },
-    arbitrum: {
-      url: ARBITRUM_URL,
-      gasPrice: 30000000000,
-      chainId: 42161,
-      accounts: [ARBITRUM_DEPLOY_KEY]
-    },
-    avax: {
-      url: AVAX_URL,
-      gasPrice: 200000000000,
-      chainId: 43114,
-      accounts: [AVAX_DEPLOY_KEY]
-    },
-    polygon: {
-      url: POLYGON_URL,
-      gasPrice: 100000000000,
-      chainId: 137,
-      accounts: [POLYGON_DEPLOY_KEY]
+    europa: {
+      url: "https://mainnet.skalenodes.com/v1/elated-tan-skat",
+      accounts: [ADMIN_PKEY],
     },
     mainnet: {
-      url: MAINNET_URL,
-      gasPrice: 50000000000,
-      accounts: [MAINNET_DEPLOY_KEY]
-    }
+      url: "https://mainnet.infura.io/v3/e0c8e6a9d33f42daafaac936d706c9d2",
+      accounts: [ADMIN_PKEY],
+      // gasPrice: 50000000000,  // wei
+    },
+    goerli: {
+      url: "https://eth-goerli.gateway.pokt.network/v1/lb/f0c06ca797ece1fe09dcdf75",
+      accounts: [ADMIN_PKEY_TESTNET],
+      gasPrice: 50000000000,  // wei
+    },
   },
   etherscan: {
     apiKey: {
-      mainnet: MAINNET_DEPLOY_KEY,
-      arbitrumOne: ARBISCAN_API_KEY,
-      avalanche: SNOWTRACE_API_KEY,
-      bsc: BSCSCAN_API_KEY,
-      polygon: POLYGONSCAN_API_KEY,
-    }
+      europa: "acb",
+      stagingv3: "abc"
+    },
+    customChains: [
+      {
+        network: "europa",
+        chainId: 2046399126,
+        urls: {
+          apiURL: "https://elated-tan-skat.explorer.mainnet.skalenodes.com/api",
+          browserURL: "https://elated-tan-skat.explorer.mainnet.skalenodes.com"
+        }
+      },
+      {
+        network: "stagingv3",
+        chainId: 476158412,
+        urls: {
+          apiURL: "https://staging-legal-crazy-castor.explorer.staging-v3.skalenodes.com/api",
+          browserURL: "https://staging-legal-crazy-castor.explorer.staging-v3.skalenodes.com"
+        }
+      }
+    ],
   },
   solidity: {
     version: "0.6.12",
